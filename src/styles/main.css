@@ -1,0 +1,14 @@
+/* Entry stylesheet. Order matters: tokens → base → components → sections. */
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+
+@import "../sections/header/header.css";
+@import "../sections/cover/cover.css";
+@import "../sections/cover/welcome.css";
+@import "../sections/cover/mist.css";
+@import "../sections/journey/journey.css";
+@import "../sections/catalog/catalog.css";
+@import "../sections/closing/closing.css";
+@import "../sections/footer/footer.css";
+@import "../sections/detail-dialog/detail-dialog.css";

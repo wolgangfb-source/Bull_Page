@@ -1,0 +1,59 @@
+/* Pieces shared by more than one section. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 12px 24px;
+  background: var(--ink);
+  color: white;
+  border: 1px solid var(--ink);
+  border-radius: 30px;
+  font-size: var(--micro);
+  font-weight: 600;
+}
+
+.btn.secondary {
+  background: transparent;
+  color: var(--ink);
+}
+
+.btn.accent {
+  background: var(--yellow);
+  color: var(--ink);
+  border-color: var(--yellow);
+}
+
+.eyebrow {
+  font-size: var(--micro);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #58635d;
+}
+
+.small {
+  font-size: var(--micro);
+}
+
+/* Fixed six-column guide behind the content. */
+.grid-lines {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  pointer-events: none;
+}
+
+.grid-lines i {
+  border-left: 1px solid #1f293310;
+}
+
+@media (max-width: 800px) {
+  .grid-lines {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

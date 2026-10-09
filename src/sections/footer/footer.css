@@ -1,0 +1,7 @@
+.site-footer {
+  position: relative;
+  z-index: 6;
+  padding: 25px 10%;
+  background: #f5f6f7;
+  font-size: var(--micro);
+}

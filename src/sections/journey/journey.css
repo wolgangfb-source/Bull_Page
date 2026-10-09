@@ -1,0 +1,271 @@
+/* Pinned stage that swaps one scene per product line as the page scrolls.
+   The negative margin lets the first scene rise underneath the last two viewports of the cover. */
+.journey {
+  position: relative;
+  height: 900vh; /* fallback for browsers without svh */
+  height: 900svh;
+  margin-top: -200vh; /* fallback for browsers without svh */
+  margin-top: -200svh;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh; /* fallback for browsers without svh */
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.organic {
+  position: absolute;
+  inset: -35% -25% -35% 44%;
+  background: var(--scene);
+  border-radius: 45% 55% 40% 60%;
+  transform: rotate(-14deg);
+  transition: background .65s, border-radius .65s;
+}
+
+.organic::after {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border: 1px solid #1f293315;
+  border-radius: inherit;
+}
+
+.intro-label {
+  position: absolute;
+  top: 108px;
+  left: 16%;
+  font-size: var(--micro);
+  color: #58635d;
+}
+
+/* ---- Scene ---- */
+
+.scene {
+  position: absolute;
+  inset: 100px 12% 65px 16%;
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  align-items: center;
+  gap: 7%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(24px);
+  transition: opacity .45s, transform .55s, visibility .45s;
+}
+
+.scene.active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.scene h2 {
+  margin: 20px 0;
+}
+
+.scene p {
+  max-width: 310px;
+  color: #4c5851;
+}
+
+.scene .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.number {
+  font-family: var(--font-mono);
+  font-size: var(--figure);
+  color: #546157;
+}
+
+.art {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.art svg {
+  width: 110%;
+  height: 100%;
+  filter: drop-shadow(0 25px 15px #1f293320);
+  transform: rotate(-5deg);
+  transition: transform .65s;
+}
+
+.scene.active .art svg {
+  transform: rotate(0);
+}
+
+.art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: 42%;
+}
+
+.art small {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: var(--micro);
+  color: #46534b;
+}
+
+/* ---- Navigation dots ---- */
+
+.dots {
+  position: absolute;
+  top: 50%;
+  left: 6%;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transform: translateY(-50%);
+}
+
+.dots button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: #607068;
+  font-family: var(--font-mono);
+  font-size: var(--micro);
+}
+
+.dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dots button[aria-current=true] {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.dots button[aria-current=true] i {
+  width: 12px;
+  height: 12px;
+}
+
+/* ---- Progress footer ---- */
+
+.scene-footer {
+  position: absolute;
+  right: 12%;
+  bottom: 24px;
+  left: 16%;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: var(--micro);
+  color: #546157;
+}
+
+.scroll-meter {
+  width: 120px;
+  height: 2px;
+  overflow: hidden;
+  background: #1f293322;
+}
+
+.scroll-meter i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--ink);
+}
+
+@media (max-width: 800px) {
+  .stage {
+    min-height: 720px;
+  }
+
+  .organic {
+    inset: 28% -60% -45% 2%;
+    border-radius: 50% 50% 0 0;
+    transform: rotate(-12deg);
+  }
+
+  .intro-label {
+    top: 90px;
+    left: 15%;
+  }
+
+  .scene {
+    inset: 125px 7% 90px 15%;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-content: start;
+    gap: 0;
+  }
+
+  .scene h2 {
+    margin: 10px 0;
+  }
+
+  .scene p {
+    max-width: 340px;
+    margin: 8px 0;
+  }
+
+  .scene .actions {
+    margin-top: 14px;
+  }
+
+  .art {
+    justify-self: center;
+    max-width: 300px;
+    aspect-ratio: 1.15;
+  }
+
+  .dots {
+    left: 1%;
+    gap: 3px;
+  }
+
+  .dots button {
+    gap: 3px;
+  }
+
+  .scene-footer {
+    right: 7%;
+    left: 15%;
+  }
+}
+
+@media (max-width: 380px) {
+  .stage {
+    min-height: 800px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey {
+    height: 660vh;
+    margin-top: 0;
+  }
+
+  .scene,
+  .art svg {
+    transform: none;
+  }
+}

@@ -1,0 +1,21 @@
+.closing {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 65px 10%;
+  background: var(--yellow);
+}
+
+.closing h2 {
+  font-size: var(--block);
+}
+
+@media (max-width: 800px) {
+  .closing {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

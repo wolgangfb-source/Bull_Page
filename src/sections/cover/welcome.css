@@ -1,0 +1,322 @@
+/* Welcome stage inside the cover: panorama canvas, headline, and the Bull wordmark.
+   Opacity, mask and transforms are driven per scroll frame by timeline.js. */
+.cover-welcome {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  background: #151515;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+/* Left shade that keeps the headline legible; fades and blurs out as the headline leaves. */
+.cover-welcome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, .99) 0%,
+    rgba(0, 0, 0, .95) 20%,
+    rgba(0, 0, 0, .76) 43%,
+    rgba(0, 0, 0, .34) 64%,
+    transparent 84%);
+  opacity: var(--headline-shade, 0);
+  filter: blur(calc(var(--shade-exit, 0) * 14px));
+  pointer-events: none;
+  transition: none;
+  will-change: opacity, filter;
+}
+
+.cover-welcome::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, .25), transparent 20%);
+  pointer-events: none;
+}
+
+/* Overhead panorama, panned horizontally by the timeline.
+   Only the height is set; the width always follows the image's own 3:1 ratio, so it can never
+   be stretched. The height is the viewport, or a third of its width on screens wider than 3:1
+   (where a viewport-high panorama would not reach both edges), centred vertically. */
+.welcome-photo {
+  --viewport-height: 100vh;
+  --panorama-height: max(var(--viewport-height), 100vw / 3);
+
+  position: absolute;
+  top: calc((var(--viewport-height) - var(--panorama-height)) / 2);
+  left: 0;
+  z-index: 0;
+  width: auto;
+  height: var(--panorama-height);
+  aspect-ratio: 2172 / 724;
+  transform-origin: left center;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@supports (height: 100svh) {
+  .welcome-photo {
+    --viewport-height: 100svh;
+  }
+}
+
+/* ---- Headline ---- */
+
+.welcome-headline {
+  position: absolute;
+  top: 24%;
+  left: 5.5vw;
+  z-index: 3;
+  width: min(72vw, 1200px);
+  text-align: left;
+  opacity: 0;
+  transform-origin: left center;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.welcome-headline h1 {
+  width: 100%;
+  margin: 0;
+  color: var(--paper);
+  font-size: clamp(74px, 8.17vw, 156px);
+  line-height: .91;
+  letter-spacing: -.055em;
+  text-shadow: 0 9px 35px #00150cb0;
+  white-space: nowrap;
+}
+
+.welcome-headline h1 span {
+  display: block;
+  white-space: nowrap;
+}
+
+/* The Bull dog stands in for the "O" of HORMIGÓN and tilts as the headline hops. */
+.welcome-heading-dog {
+  display: inline-block;
+  width: .76em;
+  height: .74em;
+  margin: 0 .045em;
+  vertical-align: 0;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transform: rotate(var(--heading-dog-tilt, 0deg));
+  transform-origin: 50% 72%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.welcome-scroll-line {
+  position: relative;
+  width: 94%;
+  height: 2px;
+  margin-top: clamp(18px, 2.3vh, 28px);
+  overflow: hidden;
+  background: rgba(242, 183, 5, .13);
+}
+
+.welcome-scroll-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--yellow);
+  transform: scaleX(var(--welcome-line-progress, 0));
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* ---- Wordmark ---- */
+
+.welcome-composition {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  transform: translateY(-50%);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.welcome-bull-mark {
+  position: relative;
+  flex: none;
+  width: min(800px, 76vw);
+  max-width: 76vw;
+  aspect-ratio: 1920 / 374;
+  margin: 18px 0 0;
+  opacity: 0;
+  pointer-events: auto;
+  will-change: opacity;
+}
+
+/* Source image for wordmark.js; only shown until the fractured canvas version is ready. */
+.welcome-bull-logo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: invert(1);
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+/* wordmark.js sizes and offsets this canvas inline so shards can travel past the logo box. */
+.welcome-logo-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter:
+    drop-shadow(0 0 10px rgba(255, 255, 255, .96))
+    drop-shadow(0 0 27px rgba(255, 255, 255, .62))
+    drop-shadow(0 3px 3px rgba(0, 0, 0, .56))
+    drop-shadow(0 8px 11px rgba(0, 0, 0, .38));
+  pointer-events: none;
+}
+
+/* ---- Water play/pause (button created by panorama-water.js) ---- */
+
+.water-motion-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, .65);
+  border-radius: 50%;
+  background: rgba(7, 25, 30, .58);
+  color: #fff;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, .22);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: opacity .2s, background .2s, transform .2s;
+}
+
+.water-motion-toggle:hover {
+  background: rgba(7, 25, 30, .78);
+  transform: scale(1.04);
+}
+
+.water-motion-toggle:focus-visible {
+  outline: 2px solid #f6bf00;
+  outline-offset: 3px;
+}
+
+.water-motion-toggle[hidden] {
+  display: none;
+}
+
+.water-motion-toggle svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
+}
+
+@media (max-width: 800px) {
+  .cover-welcome::before {
+    background: linear-gradient(90deg, rgba(0, 0, 0, .95) 0%, rgba(0, 0, 0, .82) 48%, rgba(0, 0, 0, .2) 100%);
+  }
+
+  .welcome-photo {
+    background: #171717;
+  }
+
+  .welcome-headline {
+    top: 28%;
+    left: 2vw;
+    width: 96vw;
+  }
+
+  .welcome-headline h1 {
+    font-size: clamp(46px, 13.8vw, 85px);
+    line-height: .94;
+    letter-spacing: -.075em;
+  }
+
+  /* Stretches from mid-screen to 12% above the bottom, centring the wordmark in the lower half. */
+  .welcome-composition {
+    bottom: 12%;
+    transform: none;
+  }
+
+  .welcome-bull-mark {
+    margin-top: 15px;
+  }
+}
+
+/* !important below wins over the inline styles timeline.js keeps writing. */
+@media (prefers-reduced-motion: reduce) {
+  .cover-welcome {
+    opacity: 1;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+
+  .cover-welcome::before {
+    opacity: 1;
+  }
+
+  .welcome-photo {
+    top: 50%;
+    width: 100vw;
+    height: auto;
+    transform: translateY(-50%) !important;
+  }
+
+  .welcome-headline {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .welcome-heading-dog {
+    transform: none;
+  }
+
+  .welcome-scroll-line::after {
+    transform: scaleX(1);
+  }
+
+  .welcome-composition {
+    opacity: 1 !important;
+    transform: none;
+  }
+
+  .welcome-bull-mark {
+    opacity: 1 !important;
+  }
+
+  /* The static canvas rendering replaces the image here too. */
+  .welcome-bull-logo {
+    opacity: 0 !important;
+  }
+
+  .water-motion-toggle {
+    display: none;
+  }
+}

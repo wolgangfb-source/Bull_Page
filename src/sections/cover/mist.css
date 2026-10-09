@@ -1,0 +1,73 @@
+/* The first collection rises beneath the soft mist while the welcome releases (animated by mist.js). */
+.cover-mist {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.mist-volute {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(120vw, 2000px);
+  max-width: none;
+  height: auto;
+  mix-blend-mode: screen;
+  filter: blur(2px);
+  opacity: 0;
+  transform-origin: 42% 70%;
+  user-select: none;
+  will-change: opacity, transform;
+}
+
+.mist-three {
+  width: min(90vw, 1500px);
+  filter: blur(5px);
+}
+
+.mist-four {
+  width: min(95vw, 1650px);
+  filter: blur(3px);
+}
+
+.mist-five {
+  width: min(135vw, 2200px);
+  filter: blur(1px);
+}
+
+.mist-depth {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #eff4f3 0%, #eef3f3dc 26%, #f3f6f64d 62%, transparent 100%);
+  opacity: 0;
+  transform: translateY(22%);
+  pointer-events: none;
+}
+
+@media (max-width: 800px) {
+  .mist-volute {
+    width: 200vw;
+  }
+
+  .mist-three,
+  .mist-four {
+    width: 170vw;
+  }
+
+  .mist-five {
+    width: 225vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-mist {
+    display: none;
+  }
+}

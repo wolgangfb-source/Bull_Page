@@ -1,0 +1,146 @@
+/* The runway is the scroll distance the pinned cover plays over; timeline.js maps scroll to each beat. */
+.cover-runway {
+  position: relative;
+  z-index: 7;
+  height: 1120vh; /* fallback for browsers without svh */
+  height: 1120svh;
+  pointer-events: none;
+}
+
+.cover {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100vh; /* fallback for browsers without svh */
+  height: 100svh;
+  min-height: 0;
+  padding: 100px 25px 65px;
+  overflow: hidden;
+  background: var(--night);
+  color: #fff;
+  text-align: center;
+  pointer-events: auto;
+  will-change: opacity;
+}
+
+/* Concrete logo: canvas drawn by concrete-logo.js, with the plain image as fallback until it is ready. */
+#cover-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.cover-fallback {
+  position: absolute;
+  top: 19%;
+  left: 50%;
+  width: min(390px, 65vw);
+  transform: translateX(-50%);
+  filter: invert(1);
+  opacity: .1;
+}
+
+.cover-copy {
+  position: relative;
+  z-index: 2;
+  transition: none;
+  will-change: opacity, transform;
+}
+
+.cover-copy p {
+  color: #bdc4c0;
+}
+
+.cover-copy .initial-invitation {
+  font-size: var(--title);
+  font-weight: 600;
+  color: white;
+}
+
+.cover-eyebrow {
+  font-size: var(--micro);
+  letter-spacing: 1.5px;
+  color: var(--yellow);
+}
+
+.cover-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 20px;
+  padding: 12px 24px;
+  border: 1px solid var(--yellow);
+  border-radius: 30px;
+  color: var(--yellow);
+  font-size: var(--micro);
+  transition: background .2s, color .2s;
+}
+
+.cover-button:hover {
+  background: var(--yellow);
+  color: var(--night);
+}
+
+.cover-pause {
+  position: absolute;
+  right: 5%;
+  bottom: 25px;
+  z-index: 3;
+  min-height: 44px;
+  padding: 10px 18px;
+  background: none;
+  border: 1px solid #ffffff44;
+  border-radius: 25px;
+  color: #bdc4c0;
+  font-size: var(--micro);
+}
+
+.cover-hint {
+  position: absolute;
+  bottom: 35px;
+  left: 5%;
+  font-size: var(--micro);
+  color: #bdc4c0;
+}
+
+@media (max-width: 800px) {
+  .cover {
+    padding-bottom: 115px;
+  }
+
+  .cover-fallback {
+    top: 23%;
+  }
+
+  .cover-copy {
+    max-width: 300px;
+  }
+
+  .cover-hint {
+    display: none;
+  }
+}
+
+/* Reduced motion: the cover becomes a single static screen showing the welcome panorama. */
+@media (prefers-reduced-motion: reduce) {
+  .cover-runway {
+    height: 100vh; /* fallback for browsers without svh */
+    height: 100svh;
+  }
+
+  .cover {
+    position: relative;
+  }
+
+  .cover-copy,
+  .cover-fallback,
+  #cover-particles,
+  .cover-hint,
+  .cover-pause {
+    display: none;
+  }
+}
