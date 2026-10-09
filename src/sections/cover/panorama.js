@@ -9,21 +9,21 @@ const asset = name => new URL(`./assets/${name}`, import.meta.url).href;
  * for the water effect. The matching aspect ratio and preview live in welcome.css.
  */
 export const PANORAMAS = {
-  // 3:1, for wide screens.
+  // 4:1, for wide screens.
   desktop: {
-    width: 3584,
-    height: 1184,
-    fast: asset('panorama-fast.webp'),
-    full: asset('panorama.webp'),
-    pool: { x: 2636, y: 248, width: 948, height: 476 },
-  },
-  // 4:1, a longer walk for narrow screens.
-  mobile: {
     width: 2508,
     height: 627,
+    fast: asset('panorama-fast.webp'),
+    full: asset('panorama.webp'),
+    pool: { x: 2076, y: 140, width: 432, height: 270 },
+  },
+  // 3:1, for narrow screens.
+  mobile: {
+    width: 3584,
+    height: 1184,
     fast: asset('panorama-mobile-fast.webp'),
     full: asset('panorama-mobile.webp'),
-    pool: { x: 2076, y: 140, width: 432, height: 270 },
+    pool: { x: 2636, y: 248, width: 948, height: 476 },
   },
 };
 

@@ -48,11 +48,11 @@
    Only the height is set; the width always follows the image's own ratio, so it can never be
    stretched. The height is the viewport, or whatever makes the image span the full width on
    screens wider than the image itself, centred vertically.
-   Wide screens use the 3:1 panorama and narrow ones the 4:1 (PANORAMAS in panorama.js);
+   Wide screens use the 4:1 panorama and narrow ones the 3:1 (PANORAMAS in panorama.js);
    the canvas itself is sized from there, these rules only have to agree on the ratio. */
 .welcome-photo {
   --viewport-height: 100vh;
-  --panorama-ratio: 3584 / 1184;
+  --panorama-ratio: 2508 / 627;
   --panorama-height: max(var(--viewport-height), 100vw / (var(--panorama-ratio)));
 
   position: absolute;
@@ -249,7 +249,7 @@
   }
 
   .welcome-photo {
-    --panorama-ratio: 2508 / 627;
+    --panorama-ratio: 3584 / 1184;
     background-color: #171717;
     background-image: url("./assets/panorama-mobile-preview.webp");
   }

@@ -50,7 +50,7 @@ src/
    │  ├─ wordmark.js          Logotipo fragmentado que reacciona al cursor
    │  ├─ mist.js              Niebla de transición
    │  ├─ cover.css · welcome.css · mist.css
-   │  └─ assets/              panorama*.webp (escritorio 3:1 y móvil 4:1, tres versiones cada uno), mist-volute.webp
+   │  └─ assets/              panorama*.webp (escritorio 4:1 y móvil 3:1, tres versiones cada uno), mist-volute.webp
    ├─ journey/                Recorrido fijo por las seis líneas, puntos de navegación
    ├─ catalog/                Tarjetas "Todas las líneas"
    ├─ closing/                Llamado final
@@ -71,9 +71,9 @@ no hay variables globales. Para agregar, quitar o editar una línea de producto 
   `Web_Hormigones_Bull_Showroom_Instagram_v3.html` (`#showroom`, `#inspiracion`, `#catalogo`,
   `#contacto`). Hay que publicarla junto a esta o actualizar los `href` en `index.html`.
 - **Resolución de los panoramas.** Se muestran a la altura completa de la pantalla, así que la
-  nitidez depende de su altura en píxeles. El de escritorio (`panorama.webp`, 3584×1184) todavía
-  se amplía ~1,8× en un monitor 4K a escala 100 %. El de móvil (`panorama-mobile.webp`, 2508×627)
-  tiene poca altura para pantallas de teléfono de alta densidad: conviene un original de al menos
-  1600 px de alto. Al reemplazar uno hay que regenerar sus tres versiones en WebP y actualizar su
+  nitidez depende de su altura en píxeles. El de escritorio (`panorama.webp`, 4:1, 2508×627) tiene
+  poca altura: en una pantalla Full HD se amplía ~1,7× y en un monitor 4K ~3,4×; conviene un
+  original de al menos 2160 px de alto. El de móvil (`panorama-mobile.webp`, 3:1, 3584×1184) queda
+  mejor servido. Al reemplazar uno hay que regenerar sus tres versiones en WebP y actualizar su
   entrada en `PANORAMAS` (`panorama.js`: tamaño y rectángulo de la piscina) y la proporción en
   `welcome.css`.
