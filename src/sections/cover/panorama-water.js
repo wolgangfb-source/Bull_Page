@@ -1,16 +1,12 @@
 import { clamp, smoothRange } from '../../shared/math.js';
 import { reducedMotion } from '../../shared/motion.js';
 
-// Rectangle enclosing the pool inside the 3584px-wide panorama; the blue mask picks the water out of it.
-const X0 = 2636, Y0 = 248, POOL_W = 948, POOL_H = 476, PANORAMA_W = 3584;
-// The ripple was tuned on a 2172px-wide panorama; this keeps its size on screen the same.
-const S = PANORAMA_W / 2172;
 const FRAME_INTERVAL = 40; // ms, ~25fps is plenty for slow ripples
 
 const PAUSE_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h3v14H5zm7 0h3v14h-3z"/></svg>';
 const PLAY_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.7v14.6L17 10z"/></svg>';
 
-// Travelling waves as sin(col * u + row * v + speed * t), with u, v in 2172px-panorama pixels:
+// Travelling waves as sin(col * u + row * v + speed * t), with u, v in pixels of a 724px-tall panorama:
 // horizontal drift, vertical chop, and two shimmer layers.
 const WAVES = [
   { col: .031, row: .019, speed: .78 },
@@ -24,17 +20,29 @@ const isBlue = (r, g, b) => smoothRange(0, 18, Math.min(b - r - 10, b - g - 2)) 
 
 /**
  * Ripples the pool water of the painted panorama and adds a floating pause button.
- * `painted` is the promise from paintPanorama(); the water is sampled from the painted pixels.
+ * Returns `show(panorama, painted)` to point it at a panorama (see PANORAMAS in panorama.js) once
+ * the `painted` promise from paintPanorama() resolves, and `resample()` for later repaints.
  */
-export function initWater({ canvas, welcome, painted }) {
-  const w = POOL_W, h = POOL_H;
-  let source = null, frame = null, mask = null, active = true, visible = false, last = 0, time = 0;
-
-  // Column parts of every wave, computed once.
-  const table = fn => Float64Array.from({ length: w }, (_, x) => fn(x / S));
-  const colSin = WAVES.map(wave => table(u => Math.sin(wave.col * u))), colCos = WAVES.map(wave => table(u => Math.cos(wave.col * u)));
-  const swellColSin = table(u => Math.sin(SWELL_COL * u)), swellColCos = table(u => Math.cos(SWELL_COL * u));
+export function initWater({ canvas, welcome }) {
+  // Pool rectangle of the current panorama, and S: its pixels per pixel of the 724px-tall reference.
+  let X0 = 0, Y0 = 0, w = 0, h = 0, S = 1, panoramaWidth = 1;
+  let colSin = [], colCos = [], swellColSin = null, swellColCos = null;
   const rowSin = new Float64Array(WAVES.length), rowCos = new Float64Array(WAVES.length);
+  let source = null, frame = null, mask = null, active = true, visible = false, last = 0, time = 0;
+  let looping = false, shown = 0;
+
+  function configure(panorama) {
+    ({ x: X0, y: Y0, width: w, height: h } = panorama.pool);
+    S = panorama.height / 724;
+    panoramaWidth = panorama.width;
+    // Column parts of every wave, computed once per panorama.
+    const table = fn => Float64Array.from({ length: w }, (_, x) => fn(x / S));
+    colSin = WAVES.map(wave => table(u => Math.sin(wave.col * u)));
+    colCos = WAVES.map(wave => table(u => Math.cos(wave.col * u)));
+    swellColSin = table(u => Math.sin(SWELL_COL * u));
+    swellColCos = table(u => Math.cos(SWELL_COL * u));
+    source = frame = mask = null;
+  }
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -49,7 +57,7 @@ export function initWater({ canvas, welcome, painted }) {
   function updateButton() {
     if (reducedMotion.matches) { button.hidden = true; return; }
     const rect = canvas.getBoundingClientRect();
-    const waterLeft = rect.left + rect.width * (X0 / PANORAMA_W);
+    const waterLeft = rect.left + rect.width * (X0 / panoramaWidth);
     const host = welcome.getBoundingClientRect();
     button.hidden = !(host.bottom > 0 && host.top < innerHeight && waterLeft < innerWidth - 70 && rect.right > innerWidth * .55);
   }
@@ -70,15 +78,9 @@ export function initWater({ canvas, welcome, painted }) {
     }
   }
 
-  function prepare() {
-    sample();
-    updateButton();
-    if (!reducedMotion.matches) requestAnimationFrame(tick);
-  }
-
   function tick(now) {
     requestAnimationFrame(tick);
-    if (!active || !visible || document.hidden || reducedMotion.matches || now - last < FRAME_INTERVAL) return;
+    if (!source || !active || !visible || document.hidden || reducedMotion.matches || now - last < FRAME_INTERVAL) return;
     const dt = last ? Math.min(now - last, 80) : FRAME_INTERVAL;
     last = now;
     time += dt * .001;
@@ -139,8 +141,18 @@ export function initWater({ canvas, welcome, painted }) {
   window.addEventListener('scroll', updateButton, { passive: true });
   window.addEventListener('resize', updateButton, { passive: true });
 
-  painted.then(ok => { if (ok) prepare(); });
-
-  // Call after the canvas is repainted with a new version of the panorama.
-  return { resample() { if (source) sample(); } };
+  return {
+    show(panorama, painted) {
+      const current = ++shown;
+      configure(panorama);
+      painted.then(ok => {
+        if (!ok || current !== shown) return; // failed, or another panorama was requested meanwhile
+        sample();
+        updateButton();
+        if (!looping) { looping = true; requestAnimationFrame(tick); }
+      });
+    },
+    // Call after the canvas is repainted with a sharper version of the same panorama.
+    resample() { if (source) sample(); },
+  };
 }

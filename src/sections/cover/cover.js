@@ -1,5 +1,5 @@
 import { initConcreteLogo } from './concrete-logo.js';
-import { paintPanorama } from './panorama.js';
+import { PANORAMAS, mobileLayout, paintPanorama } from './panorama.js';
 import { initWater } from './panorama-water.js';
 import { initMist } from './mist.js';
 import { initWordmark } from './wordmark.js';
@@ -13,9 +13,13 @@ export function initCover({ setHeaderTone }) {
   const panoramaCanvas = welcome.querySelector('.welcome-photo');
   const pauseButton = cover.querySelector('#cover-motion');
 
-  let water = null;
-  const painted = paintPanorama(panoramaCanvas, { onUpgrade: () => water?.resample() });
-  water = initWater({ canvas: panoramaCanvas, welcome, painted });
+  // Narrow screens get their own panorama; repaint if the layout crosses the breakpoint (e.g. on rotation).
+  const water = initWater({ canvas: panoramaCanvas, welcome });
+  function showPanorama() {
+    const panorama = mobileLayout.matches ? PANORAMAS.mobile : PANORAMAS.desktop;
+    water.show(panorama, paintPanorama(panoramaCanvas, panorama, { onUpgrade: water.resample }));
+  }
+  showPanorama();
 
   const concreteLogo = initConcreteLogo({ cover, runway, pauseButton });
   const mist = initMist(cover.querySelector('.cover-mist'));
@@ -32,4 +36,9 @@ export function initCover({ setHeaderTone }) {
 
   timeline = initTimeline({ cover, runway, pauseButton, mist, wordmark, setHeaderTone });
   timeline.render();
+
+  mobileLayout.addEventListener('change', () => {
+    showPanorama();
+    timeline.render(); // the pan distance depends on the panorama's width
+  });
 }
