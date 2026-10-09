@@ -45,12 +45,12 @@
 }
 
 /* Overhead panorama, panned horizontally by the timeline.
-   Only the height is set; the width always follows the image's own 3:1 ratio, so it can never
-   be stretched. The height is the viewport, or a third of its width on screens wider than 3:1
-   (where a viewport-high panorama would not reach both edges), centred vertically. */
+   Only the height is set; the width always follows the image's own ratio (about 3:1), so it can
+   never be stretched. The height is the viewport, or whatever makes the image span the full width
+   on screens wider than the image itself, centred vertically. */
 .welcome-photo {
   --viewport-height: 100vh;
-  --panorama-height: max(var(--viewport-height), 100vw / 3);
+  --panorama-height: max(var(--viewport-height), 100vw * 1184 / 3584);
 
   position: absolute;
   top: calc((var(--viewport-height) - var(--panorama-height)) / 2);
@@ -58,7 +58,9 @@
   z-index: 0;
   width: auto;
   height: var(--panorama-height);
-  aspect-ratio: 2172 / 724;
+  aspect-ratio: 3584 / 1184;
+  /* Low-resolution stand-in, visible through the canvas until panorama.js paints over it. */
+  background: url("./assets/panorama-preview.webp") center / 100% 100% no-repeat;
   transform-origin: left center;
   pointer-events: none;
   will-change: transform;
@@ -244,7 +246,7 @@
   }
 
   .welcome-photo {
-    background: #171717;
+    background-color: #171717;
   }
 
   .welcome-headline {

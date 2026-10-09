@@ -44,12 +44,12 @@ src/
    │  ├─ cover.js             Conecta los efectos de la portada
    │  ├─ timeline.js          Coreografía por scroll (qué pasa en cada tramo)
    │  ├─ concrete-logo.js     Logo de hormigón que se arma, reacciona al cursor y se dispersa
-   │  ├─ panorama-grass.js    Pinta el panorama y le aplica césped fotográfico
+   │  ├─ panorama.js          Carga progresiva del panorama (vista previa → rápida → completa)
    │  ├─ panorama-water.js    Ondas del agua de la piscina y su botón de pausa
    │  ├─ wordmark.js          Logotipo fragmentado que reacciona al cursor
    │  ├─ mist.js              Niebla de transición
    │  ├─ cover.css · welcome.css · mist.css
-   │  └─ assets/              panorama.webp, lawn-texture.webp, (mist-volute.webp)
+   │  └─ assets/              panorama.webp, panorama-fast.webp, panorama-preview.webp, mist-volute.webp
    ├─ journey/                Recorrido fijo por las seis líneas, puntos de navegación
    ├─ catalog/                Tarjetas "Todas las líneas"
    ├─ closing/                Llamado final
@@ -69,10 +69,8 @@ no hay variables globales. Para agregar, quitar o editar una línea de producto 
 - **Falta la página del showroom.** Seis enlaces apuntan a
   `Web_Hormigones_Bull_Showroom_Instagram_v3.html` (`#showroom`, `#inspiracion`, `#catalogo`,
   `#contacto`). Hay que publicarla junto a esta o actualizar los `href` en `index.html`.
-- **Resolución del panorama.** `panorama.webp` mide 2172×724 px y se muestra a la altura completa
-  de la pantalla: en un monitor 4K se amplía ~3× y se ve borroso. Hace falta un original de al
-  menos 6480×2160 px. Al reemplazarla hay que escalar las coordenadas del césped y la piscina en
-  `panorama-grass.js` y `panorama-water.js`, que están en píxeles de la imagen actual.
-- **Peso de imágenes.** Ya están en WebP (3,4 MB en total; el panorama, sin pérdida, son 2,7 MB). El césped se sigue componiendo en el
-  navegador al cargar; hornear ese resultado en una sola imagen eliminaría `lawn-texture.webp` y
-  el cálculo inicial.
+- **Resolución del panorama.** `panorama.webp` mide 3584×1184 px y se muestra a la altura completa
+  de la pantalla: en un monitor 4K a escala 100 % todavía se amplía ~1,8×. Para nitidez total ahí
+  haría falta un original de unos 6480×2160 px. Al reemplazarlo hay que regenerar las tres
+  versiones (completa, rápida a 2172 px y vista previa a 543 px) y, si cambia la composición,
+  ajustar el rectángulo de la piscina en `panorama-water.js` y el tamaño del `<canvas>`.

@@ -1,22 +1,40 @@
 import { clamp, smoothRange } from '../../shared/math.js';
 import { reducedMotion } from '../../shared/motion.js';
 
-// Pool region inside the 2172px-wide panorama.
-const X0 = 1615, Y0 = 198, POOL_W = 557, POOL_H = 326, PANORAMA_W = 2172;
+// Rectangle enclosing the pool inside the 3584px-wide panorama; the blue mask picks the water out of it.
+const X0 = 2636, Y0 = 248, POOL_W = 948, POOL_H = 476, PANORAMA_W = 3584;
+// The ripple was tuned on a 2172px-wide panorama; this keeps its size on screen the same.
+const S = PANORAMA_W / 2172;
 const FRAME_INTERVAL = 40; // ms, ~25fps is plenty for slow ripples
 
 const PAUSE_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h3v14H5zm7 0h3v14h-3z"/></svg>';
 const PLAY_ICON = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 2.7v14.6L17 10z"/></svg>';
 
+// Travelling waves as sin(col * u + row * v + speed * t), with u, v in 2172px-panorama pixels:
+// horizontal drift, vertical chop, and two shimmer layers.
+const WAVES = [
+  { col: .031, row: .019, speed: .78 },
+  { col: .082, row: -.031, speed: -.82 },
+  { col: .027, row: .046, speed: 1.33 },
+  { col: .069, row: -.031, speed: -.89 },
+];
+const SWELL_COL = .044; // vertical swell that only varies along x
+
 const isBlue = (r, g, b) => smoothRange(0, 18, Math.min(b - r - 10, b - g - 2)) * smoothRange(44, 82, g);
 
 /**
  * Ripples the pool water of the painted panorama and adds a floating pause button.
- * `painted` is the promise from paintPanorama(); the water is sampled from its final pixels.
+ * `painted` is the promise from paintPanorama(); the water is sampled from the painted pixels.
  */
 export function initWater({ canvas, welcome, painted }) {
   const w = POOL_W, h = POOL_H;
   let source = null, frame = null, mask = null, active = true, visible = false, last = 0, time = 0;
+
+  // Column parts of every wave, computed once.
+  const table = fn => Float64Array.from({ length: w }, (_, x) => fn(x / S));
+  const colSin = WAVES.map(wave => table(u => Math.sin(wave.col * u))), colCos = WAVES.map(wave => table(u => Math.cos(wave.col * u)));
+  const swellColSin = table(u => Math.sin(SWELL_COL * u)), swellColCos = table(u => Math.cos(SWELL_COL * u));
+  const rowSin = new Float64Array(WAVES.length), rowCos = new Float64Array(WAVES.length);
 
   const button = document.createElement('button');
   button.type = 'button';
@@ -40,7 +58,8 @@ export function initWater({ canvas, welcome, painted }) {
     if (source) canvas.getContext('2d').putImageData(source, X0, Y0);
   }
 
-  function prepare() {
+  /** Takes the pool as currently painted as the still image the ripples are sampled from. */
+  function sample() {
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     source = ctx.getImageData(X0, Y0, w, h);
     frame = ctx.createImageData(w, h);
@@ -49,6 +68,10 @@ export function initWater({ canvas, welcome, painted }) {
       const i = p * 4;
       mask[p] = isBlue(source.data[i], source.data[i + 1], source.data[i + 2]);
     }
+  }
+
+  function prepare() {
+    sample();
     updateButton();
     if (!reducedMotion.matches) requestAnimationFrame(tick);
   }
@@ -60,19 +83,30 @@ export function initWater({ canvas, welcome, painted }) {
     last = now;
     time += dt * .001;
     const src = source.data, dst = frame.data, ctx = canvas.getContext('2d');
+    // Each wave is sin(column part + row part); with the column parts tabulated, a row only needs
+    // the sine and cosine of its own part, and no pixel calls Math.sin.
+    const swellCos = Math.cos(time * .66), swellSin = Math.sin(time * .66);
     for (let y = 0; y < h; y++) {
-      const flowA = Math.sin(y * .057 + time * .91), flowB = Math.sin(y * .117 - time * .61);
+      const v = y / S;
+      const flow = 2.3 * Math.sin(v * .057 + time * .91) + 1.1 * Math.sin(v * .117 - time * .61);
+      for (let k = 0; k < WAVES.length; k++) {
+        const phase = WAVES[k].row * v + WAVES[k].speed * time;
+        rowSin[k] = Math.sin(phase);
+        rowCos[k] = Math.cos(phase);
+      }
       for (let x = 0; x < w; x++) {
         const p = y * w + x, i = p * 4, m = mask[p];
         if (m < .05) { dst[i] = src[i]; dst[i + 1] = src[i + 1]; dst[i + 2] = src[i + 2]; dst[i + 3] = 255; continue; }
-        const dx = 2.3 * flowA + 1.1 * flowB + 0.7 * Math.sin(x * .031 + y * .019 + time * .78);
-        const dy = 1.6 * Math.sin(x * .044 + time * .66) + 0.65 * Math.sin(x * .082 - y * .031 - time * .82);
+        const drift = colSin[0][x] * rowCos[0] + colCos[0][x] * rowSin[0];
+        const chop = colSin[1][x] * rowCos[1] + colCos[1][x] * rowSin[1];
+        const dx = S * (flow + 0.7 * drift);
+        const dy = S * (1.6 * (swellColSin[x] * swellCos + swellColCos[x] * swellSin) + 0.65 * chop);
         const sx = clamp(x + dx, 0, w - 1.001), sy = clamp(y + dy, 0, h - 1.001);
         const xa = Math.floor(sx), ya = Math.floor(sy), tx = sx - xa, ty = sy - ya;
         const p00 = ya * w + xa, p10 = p00 + 1, p01 = p00 + w, p11 = p01 + 1;
         // Never pull deck or coping pixels into the water.
         const sampleWater = Math.min(mask[p00], mask[p10], mask[p01], mask[p11]) > .15;
-        const glimmer = 1 + .017 * Math.sin(x * .027 + y * .046 + time * 1.33) + .012 * Math.sin(x * .069 - y * .031 - time * .89);
+        const glimmer = 1 + .017 * (colSin[2][x] * rowCos[2] + colCos[2][x] * rowSin[2]) + .012 * (colSin[3][x] * rowCos[3] + colCos[3][x] * rowSin[3]);
         const strength = m * .88;
         for (let c = 0; c < 3; c++) {
           const sample = sampleWater
@@ -106,4 +140,7 @@ export function initWater({ canvas, welcome, painted }) {
   window.addEventListener('resize', updateButton, { passive: true });
 
   painted.then(ok => { if (ok) prepare(); });
+
+  // Call after the canvas is repainted with a new version of the panorama.
+  return { resample() { if (source) sample(); } };
 }

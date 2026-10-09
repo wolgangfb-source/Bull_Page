@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Hormigones Bull · Seis mundos</title>
 
-  <!-- The panorama is painted on a canvas from JS, so the browser cannot discover these on its own. -->
-  <link rel="preload" as="image" type="image/webp" href="src/sections/cover/assets/panorama.webp">
-  <link rel="preload" as="image" type="image/webp" href="src/sections/cover/assets/lawn-texture.webp">
+  <!-- The panorama is painted on a canvas from JS, so the browser cannot discover these early on its own. -->
+  <link rel="preload" as="image" type="image/webp" fetchpriority="high" href="src/sections/cover/assets/panorama-preview.webp">
+  <link rel="preload" as="image" type="image/webp" fetchpriority="high" href="src/sections/cover/assets/panorama-fast.webp">
 
   <link rel="stylesheet" href="src/styles/main.css">
   <script type="module" src="src/main.js"></script>
@@ -37,7 +37,7 @@
         <img class="cover-fallback" src="src/assets/brand/bull-icon.webp" alt="Hormigones Bull">
 
         <div class="cover-welcome" aria-labelledby="welcome-title">
-          <canvas class="welcome-photo" width="2172" height="724" role="img" aria-label="Sendero de pastelones circulares de hormigón sobre césped natural que conduce a una piscina"></canvas>
+          <canvas class="welcome-photo" width="3584" height="1184" role="img" aria-label="Sendero de pastelones circulares de hormigón sobre césped natural que conduce a una piscina"></canvas>
 
           <div class="welcome-headline">
             <h1 id="welcome-title">

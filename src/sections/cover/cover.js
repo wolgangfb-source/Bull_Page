@@ -1,5 +1,5 @@
 import { initConcreteLogo } from './concrete-logo.js';
-import { paintPanorama } from './panorama-grass.js';
+import { paintPanorama } from './panorama.js';
 import { initWater } from './panorama-water.js';
 import { initMist } from './mist.js';
 import { initWordmark } from './wordmark.js';
@@ -13,8 +13,9 @@ export function initCover({ setHeaderTone }) {
   const panoramaCanvas = welcome.querySelector('.welcome-photo');
   const pauseButton = cover.querySelector('#cover-motion');
 
-  const painted = paintPanorama(panoramaCanvas);
-  initWater({ canvas: panoramaCanvas, welcome, painted });
+  let water = null;
+  const painted = paintPanorama(panoramaCanvas, { onUpgrade: () => water?.resample() });
+  water = initWater({ canvas: panoramaCanvas, welcome, painted });
 
   const concreteLogo = initConcreteLogo({ cover, runway, pauseButton });
   const mist = initMist(cover.querySelector('.cover-mist'));
