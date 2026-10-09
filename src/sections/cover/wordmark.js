@@ -1,5 +1,6 @@
 import { reducedMotion } from '../../shared/motion.js';
 import { clipPolygon } from '../../shared/fracture.js';
+import { followTouch } from '../../shared/touch.js';
 
 const random = n => {
   const v = Math.sin(n * 127.1 + 78.233) * 43758.5453;
@@ -8,11 +9,12 @@ const random = n => {
 
 /**
  * The second-stage wordmark stays whole and responds to hover like the concrete dog.
- * `isPaused` and `pauseButton` come from the cover's shared pause control; `onReady` fires
- * once the canvas version can replace the plain image.
+ * `isPaused` and `pauseButton` come from the cover's shared pause control; `touchSurface` is the
+ * element whose touches reach the wordmark; `onReady` fires once the canvas version can replace
+ * the plain image.
  * Returns `render(isReduced)` for the timeline and `isReady()`.
  */
-export function initWordmark({ mark, isPaused, pauseButton, onReady }) {
+export function initWordmark({ mark, isPaused, pauseButton, touchSurface, onReady }) {
   const img = mark.querySelector('.welcome-bull-logo');
   const canvas = mark.querySelector('.welcome-logo-particles');
   const ctx = canvas.getContext('2d');
@@ -210,15 +212,22 @@ export function initWordmark({ mark, isPaused, pauseButton, onReady }) {
     if (!frame && !reduced) frame = requestAnimationFrame(draw);
   }
 
-  mark.addEventListener('pointermove', e => {
-    if (e.pointerType === 'touch') return;
+  function pointAt(clientX, clientY) {
     const rect = mark.getBoundingClientRect();
-    cursor.x = e.clientX - rect.left + bleed;
-    cursor.y = e.clientY - rect.top + bleed;
+    cursor.x = clientX - rect.left + bleed;
+    cursor.y = clientY - rect.top + bleed;
     cursor.active = true;
     schedule();
-  });
-  mark.addEventListener('pointerleave', () => { cursor.active = false; schedule(); });
+  }
+  function release() {
+    cursor.active = false;
+    schedule();
+  }
+  // Mouse and pen come through pointer events; fingers through followTouch, which listens on the
+  // whole cover so a swipe that starts beside the wordmark still reaches it.
+  mark.addEventListener('pointermove', e => { if (e.pointerType !== 'touch') pointAt(e.clientX, e.clientY); });
+  mark.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') release(); });
+  followTouch(touchSurface, (x, y) => { if (mark.style.pointerEvents !== 'none') pointAt(x, y); }, release);
   window.addEventListener('resize', prepare, { passive: true });
   reducedMotion.addEventListener('change', () => { reduced = reducedMotion.matches; schedule(); });
   pauseButton.addEventListener('click', schedule);

@@ -1,6 +1,7 @@
 import { clamp, smoothstep } from '../../shared/math.js';
 import { reducedMotion } from '../../shared/motion.js';
 import { clipPolygon } from '../../shared/fracture.js';
+import { followTouch } from '../../shared/touch.js';
 
 // The logo is modelled in a 180-unit square and rasterised at 3x.
 const UNITS = 180, SUPERSAMPLE = 3, N = UNITS * SUPERSAMPLE;
@@ -272,14 +273,16 @@ export function initConcreteLogo({ cover, runway, pauseButton }) {
   };
   logoImage.src = fallback.src;
 
-  cover.addEventListener('pointermove', e => {
-    if (e.pointerType === 'touch') return;
+  function pointAt(clientX, clientY) {
     const r = canvas.getBoundingClientRect();
-    cursor.x = e.clientX - r.left;
-    cursor.y = e.clientY - r.top;
+    cursor.x = clientX - r.left;
+    cursor.y = clientY - r.top;
     cursor.active = true;
-  });
-  cover.addEventListener('pointerleave', () => { cursor.active = false; });
+  }
+  // Mouse and pen come through pointer events; fingers through followTouch.
+  cover.addEventListener('pointermove', e => { if (e.pointerType !== 'touch') pointAt(e.clientX, e.clientY); });
+  cover.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') cursor.active = false; });
+  followTouch(cover, pointAt, () => { cursor.active = false; });
   pauseButton.onclick = () => { paused = !paused; refresh(); };
   reducedMotion.addEventListener('change', e => { paused = e.matches; refresh(); });
   // While paused there is no loop, so scroll has to repaint the fade-out itself.

@@ -26,6 +26,7 @@ export function initCover({ setHeaderTone }) {
     mark: welcome.querySelector('.welcome-bull-mark'),
     isPaused: concreteLogo.isPaused,
     pauseButton,
+    touchSurface: cover,
     onReady: () => timeline?.render(),
   });
 

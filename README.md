@@ -36,7 +36,8 @@ src/
 ├─ shared/
 │  ├─ math.js                 clamp, smoothstep, smoothRange
 │  ├─ motion.js               prefers-reduced-motion
-│  └─ fracture.js             Recorte de polígonos para fragmentar los logos
+│  ├─ fracture.js             Recorte de polígonos para fragmentar los logos
+│  └─ touch.js                Seguimiento del dedo en pantallas táctiles
 ├─ assets/brand/              Isotipo y logotipo
 └─ sections/
    ├─ header/                 Navegación y menú móvil
