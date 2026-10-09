@@ -1,7 +1,7 @@
 import { clamp, smoothRange } from '../../shared/math.js';
 
-const SCENE_URL = new URL('./assets/panorama.png', import.meta.url).href;
-const LAWN_URL = new URL('./assets/lawn-texture.jpg', import.meta.url).href;
+const SCENE_URL = new URL('./assets/panorama.webp', import.meta.url).href;
+const LAWN_URL = new URL('./assets/lawn-texture.webp', import.meta.url).href;
 
 const W = 2172, H = 724;
 // The lawn ends where the pool deck begins.
@@ -9,6 +9,8 @@ const LAWN_RIGHT = 1582;
 // Upper and lower lawn boundaries as [x, y] polylines across the panorama.
 const LAWN_TOP = [[0, 165], [170, 184], [380, 199], [650, 208], [900, 195], [1150, 203], [1400, 211], [1582, 202]];
 const LAWN_BOTTOM = [[0, 383], [170, 417], [380, 461], [650, 477], [900, 478], [1150, 472], [1400, 487], [1582, 486]];
+// lawn-texture.webp holds only the band of grass the lawn can cover; it sits this far down the panorama.
+const LAWN_TEXTURE_TOP = 160;
 
 const ready = image => image.decode
   ? image.decode()
@@ -50,7 +52,7 @@ export function paintPanorama(canvas) {
     const original = ctx.getImageData(0, 0, W, H);
     // A heavy blur of the scene carries its lighting without the painted grass detail.
     const shade = pixelsOf(c => { c.filter = 'blur(28px)'; c.drawImage(scene, 0, 0, W, H); });
-    const texture = pixelsOf(c => c.drawImage(lawn, 114, 313, W, H, 0, 0, W, H));
+    const texture = pixelsOf(c => c.drawImage(lawn, 0, LAWN_TEXTURE_TOP));
 
     let sum = 0, count = 0;
     for (let y = 200; y < 480; y += 3) for (let x = 0; x < 1560; x += 3) {

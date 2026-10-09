@@ -49,7 +49,7 @@ src/
    │  ├─ wordmark.js          Logotipo fragmentado que reacciona al cursor
    │  ├─ mist.js              Niebla de transición
    │  ├─ cover.css · welcome.css · mist.css
-   │  └─ assets/              panorama.png, lawn-texture.jpg, (mist-volute.png)
+   │  └─ assets/              panorama.webp, lawn-texture.webp, (mist-volute.webp)
    ├─ journey/                Recorrido fijo por las seis líneas, puntos de navegación
    ├─ catalog/                Tarjetas "Todas las líneas"
    ├─ closing/                Llamado final
@@ -64,15 +64,15 @@ no hay variables globales. Para agregar, quitar o editar una línea de producto 
 ## Pendientes heredados del archivo original
 
 - **La niebla es una textura sustituta.** El original apuntaba a `Humo_Bull_Volutas_Transparente.png`,
-  que no venía incluido. `src/sections/cover/assets/mist-volute.png` es un reemplazo generado;
+  que no venía incluido. `src/sections/cover/assets/mist-volute.webp` es un reemplazo generado;
   si el cliente entrega su imagen, basta con sobrescribir ese archivo.
 - **Falta la página del showroom.** Seis enlaces apuntan a
   `Web_Hormigones_Bull_Showroom_Instagram_v3.html` (`#showroom`, `#inspiracion`, `#catalogo`,
   `#contacto`). Hay que publicarla junto a esta o actualizar los `href` en `index.html`.
-- **Resolución del panorama.** `panorama.png` mide 2172×724 px y se muestra a la altura completa
+- **Resolución del panorama.** `panorama.webp` mide 2172×724 px y se muestra a la altura completa
   de la pantalla: en un monitor 4K se amplía ~3× y se ve borroso. Hace falta un original de al
   menos 6480×2160 px. Al reemplazarla hay que escalar las coordenadas del césped y la piscina en
   `panorama-grass.js` y `panorama-water.js`, que están en píxeles de la imagen actual.
-- **Peso de imágenes.** `panorama.png` (3,7 MB) y `lawn-texture.jpg` (1,6 MB) son el 93 % de la
-  descarga. El césped se compone en el navegador al cargar; hornear ese resultado en una sola
-  imagen WebP/AVIF eliminaría la segunda imagen y el cálculo inicial.
+- **Peso de imágenes.** Ya están en WebP (3,4 MB en total; el panorama, sin pérdida, son 2,7 MB). El césped se sigue componiendo en el
+  navegador al cargar; hornear ese resultado en una sola imagen eliminaría `lawn-texture.webp` y
+  el cálculo inicial.

@@ -1,4 +1,4 @@
-const POT_PHOTO = new URL('./assets/macetero.jpg', import.meta.url).href;
+const POT_PHOTO = new URL('./assets/macetero.webp', import.meta.url).href;
 
 const SHAPE_PATHS = {
   pool: 'M35 170Q72 103 156 113L390 166L346 228L127 181Q64 160 35 192Z',

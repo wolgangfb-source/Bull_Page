@@ -6,8 +6,8 @@
   <title>Hormigones Bull · Seis mundos</title>
 
   <!-- The panorama is painted on a canvas from JS, so the browser cannot discover these on its own. -->
-  <link rel="preload" as="image" href="src/sections/cover/assets/panorama.png">
-  <link rel="preload" as="image" href="src/sections/cover/assets/lawn-texture.jpg">
+  <link rel="preload" as="image" type="image/webp" href="src/sections/cover/assets/panorama.webp">
+  <link rel="preload" as="image" type="image/webp" href="src/sections/cover/assets/lawn-texture.webp">
 
   <link rel="stylesheet" href="src/styles/main.css">
   <script type="module" src="src/main.js"></script>
@@ -16,7 +16,7 @@
 
   <!-- ============ Header ============ -->
   <header class="site-header">
-    <a class="brand" href="#portada"><img src="src/assets/brand/bull-icon.png" alt="Hormigones Bull">HORMIGONES BULL</a>
+    <a class="brand" href="#portada"><img src="src/assets/brand/bull-icon.webp" alt="Hormigones Bull">HORMIGONES BULL</a>
     <button class="btn secondary menu-toggle" id="menu" aria-expanded="false" aria-controls="nav">Menú</button>
     <nav class="site-nav" id="nav">
       <a href="#catalogo">Todas las líneas</a>
@@ -34,7 +34,7 @@
     <div class="cover-runway">
       <section class="cover" id="portada">
         <canvas id="cover-particles" aria-hidden="true"></canvas>
-        <img class="cover-fallback" src="src/assets/brand/bull-icon.png" alt="Hormigones Bull">
+        <img class="cover-fallback" src="src/assets/brand/bull-icon.webp" alt="Hormigones Bull">
 
         <div class="cover-welcome" aria-labelledby="welcome-title">
           <canvas class="welcome-photo" width="2172" height="724" role="img" aria-label="Sendero de pastelones circulares de hormigón sobre césped natural que conduce a una piscina"></canvas>
@@ -43,25 +43,25 @@
             <h1 id="welcome-title">
               <span>BIENVENIDO</span>
               <span>AL MUNDO DEL</span>
-              <span class="welcome-concrete-word" aria-label="HORMIGÓN">H<img class="welcome-heading-dog" src="src/assets/brand/bull-icon.png" alt="" aria-hidden="true">RMIGÓN</span>
+              <span class="welcome-concrete-word" aria-label="HORMIGÓN">H<img class="welcome-heading-dog" src="src/assets/brand/bull-icon.webp" alt="" aria-hidden="true">RMIGÓN</span>
             </h1>
             <div class="welcome-scroll-line" aria-hidden="true"></div>
           </div>
 
           <div class="welcome-composition">
             <div class="welcome-bull-mark">
-              <img class="welcome-bull-logo" src="src/assets/brand/bull-wordmark.png" alt="Hormigones Bull">
+              <img class="welcome-bull-logo" src="src/assets/brand/bull-wordmark.webp" alt="Hormigones Bull">
               <canvas class="welcome-logo-particles" aria-hidden="true"></canvas>
             </div>
           </div>
         </div>
 
         <div class="cover-mist" aria-hidden="true">
-          <img class="mist-volute mist-one" src="src/sections/cover/assets/mist-volute.png" alt="">
-          <img class="mist-volute mist-two" src="src/sections/cover/assets/mist-volute.png" alt="">
-          <img class="mist-volute mist-three" src="src/sections/cover/assets/mist-volute.png" alt="">
-          <img class="mist-volute mist-four" src="src/sections/cover/assets/mist-volute.png" alt="">
-          <img class="mist-volute mist-five" src="src/sections/cover/assets/mist-volute.png" alt="">
+          <img class="mist-volute mist-one" src="src/sections/cover/assets/mist-volute.webp" alt="">
+          <img class="mist-volute mist-two" src="src/sections/cover/assets/mist-volute.webp" alt="">
+          <img class="mist-volute mist-three" src="src/sections/cover/assets/mist-volute.webp" alt="">
+          <img class="mist-volute mist-four" src="src/sections/cover/assets/mist-volute.webp" alt="">
+          <img class="mist-volute mist-five" src="src/sections/cover/assets/mist-volute.webp" alt="">
           <div class="mist-depth"></div>
         </div>
 
