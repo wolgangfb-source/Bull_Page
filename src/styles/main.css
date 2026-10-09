@@ -1,4 +1,5 @@
-/* Entry stylesheet. Order matters: tokens → base → components → sections. */
+/* Entry stylesheet. Order matters: fonts → tokens → base → components → sections. */
+@import "./fonts.css";
 @import "./tokens.css";
 @import "./base.css";
 @import "./components.css";

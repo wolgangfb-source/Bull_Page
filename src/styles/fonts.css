@@ -1,0 +1,5 @@
+/* Self-hosted fonts (npm packages, bundled by Vite). The family names match the stacks in tokens.css. */
+@import "@fontsource-variable/inter/index.css";
+@import "@fontsource-variable/archivo/index.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/600.css";

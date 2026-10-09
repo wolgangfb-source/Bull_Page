@@ -16,8 +16,8 @@ npm run build    # genera dist/ listo para publicar
 npm run preview  # sirve dist/ para revisarlo
 ```
 
-No depende del empaquetador: `index.html` usa módulos ES y `@import` nativos, así que cualquier
-servidor estático apuntando a esta carpeta también funciona.
+`index.html` usa módulos ES y `@import` nativos, así que un servidor estático apuntando a esta
+carpeta también funciona, pero sin las fuentes: esas las resuelve el empaquetador desde `node_modules`.
 
 ## Estructura
 
@@ -27,6 +27,7 @@ src/
 ├─ main.js                    Punto de entrada: inicializa cada sección y las conecta
 ├─ styles/
 │  ├─ main.css                Importa todo en orden (tokens → base → componentes → secciones)
+│  ├─ fonts.css               Inter, Archivo e IBM Plex Mono, autoalojadas desde npm
 │  ├─ tokens.css              Colores, escala tipográfica y fuentes
 │  ├─ base.css                Reset y estilos de elementos
 │  └─ components.css          .btn, .eyebrow, .small, .grid-lines
@@ -62,13 +63,12 @@ no hay variables globales. Para agregar, quitar o editar una línea de producto 
 
 ## Pendientes heredados del archivo original
 
-- **Falta la imagen de la niebla.** El original apuntaba a `Humo_Bull_Volutas_Transparente.png`,
-  que no venía incluido. Copiarla como `src/sections/cover/assets/mist-volute.png`.
+- **La niebla es una textura sustituta.** El original apuntaba a `Humo_Bull_Volutas_Transparente.png`,
+  que no venía incluido. `src/sections/cover/assets/mist-volute.png` es un reemplazo generado;
+  si el cliente entrega su imagen, basta con sobrescribir ese archivo.
 - **Falta la página del showroom.** Seis enlaces apuntan a
   `Web_Hormigones_Bull_Showroom_Instagram_v3.html` (`#showroom`, `#inspiracion`, `#catalogo`,
   `#contacto`). Hay que publicarla junto a esta o actualizar los `href` en `index.html`.
-- **Las fuentes no se cargan.** El CSS pide Inter, Archivo e IBM Plex Mono, pero ningún archivo las
-  incluye; hoy se ve con Arial salvo que estén instaladas en el equipo.
 - **Resolución del panorama.** `panorama.png` mide 2172×724 px y se muestra a la altura completa
   de la pantalla: en un monitor 4K se amplía ~3× y se ve borroso. Hace falta un original de al
   menos 6480×2160 px. Al reemplazarla hay que escalar las coordenadas del césped y la piscina en
